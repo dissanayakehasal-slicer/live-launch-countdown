@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
 
 function useServerSyncedNow() {
   const DEFAULT_LAUNCH_AT = useMemo(
-    () => new Date("2026-06-24T11:20:00.000Z").getTime(),
+    () => new Date("2026-06-24T11:36:00.000Z").getTime(),
     [],
   );
 
@@ -207,6 +207,23 @@ function TimeCell({ value, label }: { value: number; label: string }) {
 
 function CinematicCountdown({ remainingSec }: { remainingSec: number }) {
   const n = Math.max(1, Math.min(10, Math.ceil(remainingSec)));
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const lastPlayedRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    // Play countdown beep on each second transition
+    if (lastPlayedRef.current !== n && n >= 1 && n <= 10) {
+      lastPlayedRef.current = n;
+      if (!audioRef.current) {
+        audioRef.current = new Audio("/countdown.mp3");
+      }
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(() => {
+        // Audio playback might be blocked by browser autoplay policy
+      });
+    }
+  }, [n]);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
       <AmbientBackdrop intense />
