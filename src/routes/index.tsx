@@ -217,15 +217,16 @@ function CinematicCountdown({ remainingSec }: { remainingSec: number }) {
       audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
       console.log(`[Audio] Created Web Audio Context (state: ${audioContextRef.current.state})`);
 
-      // Create a hidden muted audio element that autoplays to resume the AudioContext.
-      // Some browsers only allow a muted media element autoplay, and this can help unlock audio.
-      const dummyAudio = new Audio();
+      // Create a hidden muted audio element that autoplays to unlock audio playback.
+      // The browser is more likely to permit muted autoplay than unmuted audio.
+      const dummyAudio = new Audio('/countdown.mp3');
       dummyAudio.muted = true;
+      dummyAudio.volume = 0;
       dummyAudio.playsInline = true;
       dummyAudio.loop = true;
       dummyAudio.autoplay = true;
-      dummyAudio.src = "data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==";
-      dummyAudio.style.display = "none";
+      dummyAudio.preload = 'auto';
+      dummyAudio.style.display = 'none';
       document.body.appendChild(dummyAudio);
 
       const handleResume = () => {
@@ -245,7 +246,7 @@ function CinematicCountdown({ remainingSec }: { remainingSec: number }) {
         }
       };
 
-      dummyAudio.addEventListener('play', handleResume, { once: true });
+      dummyAudio.addEventListener('playing', handleResume, { once: true });
       dummyAudio.play().then(() => {
         console.log(`[Audio] Dummy muted audio started successfully`);
       }).catch((err) => {
@@ -262,6 +263,9 @@ function CinematicCountdown({ remainingSec }: { remainingSec: number }) {
           } else if (ctx) {
             contextResumedRef.current = true;
           }
+          document.removeEventListener('click', resumeContext);
+          document.removeEventListener('keydown', resumeContext);
+          document.removeEventListener('touchstart', resumeContext);
         };
         document.addEventListener('click', resumeContext, { once: true });
         document.addEventListener('keydown', resumeContext, { once: true });
