@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
 
 function useServerSyncedNow() {
   const DEFAULT_LAUNCH_AT = useMemo(
-    () => new Date("2026-06-24T09:30:00.000Z").getTime(),
+    () => new Date("2026-06-22T11:10:00.000Z").getTime(),
     [],
   );
 
@@ -146,16 +146,21 @@ function PreLaunch({ remainingMs }: { remainingMs: number }) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-6 py-16">
       <header className="mb-14 flex flex-col items-center text-center animate-reveal-up">
-        <div className="mb-6 flex items-center gap-3 text-xs uppercase tracking-[0.4em] text-gold">
+        <div className="mb-4 flex items-center gap-3 text-xs uppercase tracking-[0.4em] text-gold">
           <span className="h-px w-10 bg-gold/50" />
           GMS · GEN-ZCIENCE
           <span className="h-px w-10 bg-gold/50" />
         </div>
-        <h1 className="font-display text-4xl text-cream sm:text-5xl md:text-6xl">
+        <div className="mb-4 flex items-center gap-2 rounded-full border border-gold/20 bg-card/40 px-4 py-2 text-[10px] uppercase tracking-[0.35em] text-muted-foreground shadow-[0_0_40px_-18px_rgba(255,215,110,0.45)]">
+          <span className="h-2 w-2 rounded-full bg-gold animate-neon-pulse" />
+          Launch sequence active
+          <span className="h-2 w-2 rounded-full bg-gold animate-neon-pulse" />
+        </div>
+        <h1 className="font-display text-5xl text-cream sm:text-6xl md:text-7xl lg:text-8xl">
           GEETHMUNASINGHE<span className="text-gold-gradient">.LK</span>
         </h1>
-        <p className="mt-5 font-serif-italic text-lg text-muted-foreground sm:text-xl">
-          A new chapter is about to be revealed
+        <p className="mt-5 max-w-xl font-serif-italic text-lg text-muted-foreground sm:text-xl">
+          A new chapter is about to be revealed with a live cinematic reveal.
         </p>
       </header>
 
@@ -168,7 +173,7 @@ function PreLaunch({ remainingMs }: { remainingMs: number }) {
           <span className="h-px w-16 bg-gradient-to-l from-transparent to-gold/60" />
         </div>
 
-        <div className="grid grid-cols-4 gap-3 sm:gap-6">
+        <div className="grid grid-cols-4 gap-4 sm:gap-8 xl:gap-10">
           <TimeCell value={days} label="Days" />
           <TimeCell value={hours} label="Hours" />
           <TimeCell value={minutes} label="Minutes" />
@@ -190,13 +195,22 @@ function PreLaunch({ remainingMs }: { remainingMs: number }) {
 function TimeCell({ value, label }: { value: number; label: string }) {
   const padded = String(Math.max(0, value)).padStart(2, "0");
   return (
-    <div className="relative flex min-w-[72px] flex-col items-center sm:min-w-[120px]">
-      <div className="ring-gold rounded-md bg-card/60 px-4 py-6 backdrop-blur-sm sm:px-8 sm:py-10">
-        <div className="font-display text-6xl text-gold-gradient sm:text-8xl md:text-9xl tabular-nums animate-neon-pulse animate-neon-flicker-fast">
+    <div className="relative flex min-w-[84px] flex-col items-center sm:min-w-[140px]">
+      <div className="relative overflow-hidden rounded-3xl border border-gold/15 bg-card/70 px-4 py-6 shadow-[0_0_90px_-50px_rgba(255,214,96,0.55)] backdrop-blur-xl sm:px-10 sm:py-10">
+        <span
+          className="pointer-events-none absolute inset-0 rounded-3xl opacity-80 animate-neon-edge"
+          style={{
+            background: 'radial-gradient(circle at 40% 30%, rgba(255, 234, 144, 0.22), transparent 45%, transparent 100%)',
+          }}
+        />
+        <span
+          className="pointer-events-none absolute inset-x-4 top-4 h-1 rounded-full bg-gradient-to-r from-transparent via-gold/40 to-transparent blur-xl"
+        />
+        <div className="relative font-display text-7xl text-gold-gradient sm:text-[5rem] md:text-[6rem] tabular-nums tracking-[-0.04em] animate-neon-pulse animate-neon-flicker-fast">
           {padded}
         </div>
       </div>
-      <div className="mt-3 text-[10px] uppercase tracking-[0.4em] text-muted-foreground sm:text-xs">
+      <div className="mt-4 text-[11px] uppercase tracking-[0.45em] text-muted-foreground sm:text-sm">
         {label}
       </div>
     </div>
