@@ -19,11 +19,15 @@ async function getServer() {
 
 export default {
   async fetch(request, env, ctx) {
-    // Serve static assets from the Workers Sites binding first.
-    if (env.__STATIC_CONTENT) {
-      const staticResponse = await env.__STATIC_CONTENT.fetch(request);
-      if (staticResponse.status !== 404) {
-        return staticResponse;
+    // Serve static assets with the configured binding when possible.
+    if (env.ASSETS) {
+      try {
+        const staticResponse = await env.ASSETS.fetch(request);
+        if (staticResponse.status !== 404) {
+          return staticResponse;
+        }
+      } catch {
+        // If the assets binding is unavailable or fails, continue to SSR.
       }
     }
 

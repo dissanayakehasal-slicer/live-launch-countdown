@@ -3,11 +3,9 @@ compatibility_date = "2026-06-23"
 compatibility_flags = ["nodejs_compat"]
 main = "worker.js"
 
-# If you want Wrangler to upload static assets built by Nitro, set the `site.bucket`
-# to the public output folder. The Nitro/Vite build used by this project places
-# static assets in `.output/public` by default.
-site = { bucket = "dist/client" }
-
+[assets]
+directory = "dist/client"
+binding = "ASSETS"
 workers_dev = true
 
 # Declare the D1 database binding named LAUNCH_DB. Replace `database_name` with
