@@ -146,21 +146,21 @@ function PreLaunch({ remainingMs }: { remainingMs: number }) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-6 py-16">
       <header className="mb-14 flex flex-col items-center text-center animate-reveal-up">
-        <div className="mb-4 flex items-center gap-3 text-xs uppercase tracking-[0.4em] text-gold">
-          <span className="h-px w-10 bg-gold/50" />
+        <div className="mb-4 flex items-center gap-3 text-[11px] uppercase tracking-[0.35em] text-gold">
+          <span className="h-px w-12 bg-gold/50" />
           GMS · GEN-ZCIENCE
-          <span className="h-px w-10 bg-gold/50" />
+          <span className="h-px w-12 bg-gold/50" />
         </div>
-        <div className="mb-4 flex items-center gap-2 rounded-full border border-gold/20 bg-card/40 px-4 py-2 text-[10px] uppercase tracking-[0.35em] text-muted-foreground shadow-[0_0_40px_-18px_rgba(255,215,110,0.45)]">
+        <div className="mb-4 flex flex-wrap items-center justify-center gap-3 rounded-full border border-gold/15 bg-card/40 px-4 py-2 text-[10px] uppercase tracking-[0.35em] text-muted-foreground">
           <span className="h-2 w-2 rounded-full bg-gold animate-neon-pulse" />
-          Launch sequence active
+          <span className="text-[10px] uppercase tracking-[0.35em]">Launch sequence active</span>
           <span className="h-2 w-2 rounded-full bg-gold animate-neon-pulse" />
         </div>
-        <h1 className="font-display text-5xl text-cream sm:text-6xl md:text-7xl lg:text-8xl">
+        <h1 className="font-display text-6xl text-cream sm:text-7xl md:text-8xl lg:text-[6.75rem]">
           GEETHMUNASINGHE<span className="text-gold-gradient">.LK</span>
         </h1>
-        <p className="mt-5 max-w-xl font-serif-italic text-lg text-muted-foreground sm:text-xl">
-          A new chapter is about to be revealed with a live cinematic reveal.
+        <p className="mt-5 max-w-2xl font-serif-italic text-xl text-muted-foreground sm:text-2xl">
+          Stand by for the live drop — the launch window is locked and systems are aligned.
         </p>
       </header>
 
@@ -173,11 +173,17 @@ function PreLaunch({ remainingMs }: { remainingMs: number }) {
           <span className="h-px w-16 bg-gradient-to-l from-transparent to-gold/60" />
         </div>
 
-        <div className="grid grid-cols-4 gap-4 sm:gap-8 xl:gap-10">
+        <div className="grid grid-cols-4 gap-6 sm:gap-10 xl:gap-12">
           <TimeCell value={days} label="Days" />
           <TimeCell value={hours} label="Hours" />
           <TimeCell value={minutes} label="Minutes" />
           <TimeCell value={seconds} label="Seconds" />
+        </div>
+        <div className="mt-10 flex flex-wrap justify-center gap-4 text-[11px] uppercase tracking-[0.35em] text-muted-foreground">
+          <span className="rounded-full border border-gold/15 bg-card/40 px-4 py-2 shadow-[0_0_28px_-20px_rgba(255,215,110,0.28)]">Shader pulse</span>
+          <span className="rounded-full border border-gold/15 bg-card/40 px-4 py-2 shadow-[0_0_28px_-20px_rgba(255,215,110,0.28)]">Live feed ready</span>
+          <span className="rounded-full border border-gold/15 bg-card/40 px-4 py-2 shadow-[0_0_28px_-20px_rgba(255,215,110,0.28)]">Atmospheric sync</span>
+          <span className="rounded-full border border-gold/15 bg-card/40 px-4 py-2 shadow-[0_0_28px_-20px_rgba(255,215,110,0.28)]">Precision timing</span>
         </div>
 
         <div className="mt-14 max-w-md text-center font-serif-italic text-sm text-muted-foreground/80 sm:text-base">
@@ -195,18 +201,21 @@ function PreLaunch({ remainingMs }: { remainingMs: number }) {
 function TimeCell({ value, label }: { value: number; label: string }) {
   const padded = String(Math.max(0, value)).padStart(2, "0");
   return (
-    <div className="relative flex min-w-[84px] flex-col items-center sm:min-w-[140px]">
-      <div className="relative overflow-hidden rounded-3xl border border-gold/15 bg-card/70 px-4 py-6 shadow-[0_0_90px_-50px_rgba(255,214,96,0.55)] backdrop-blur-xl sm:px-10 sm:py-10">
+    <div className="relative flex min-w-[96px] flex-col items-center sm:min-w-[150px]">
+      <div className="relative overflow-hidden rounded-[2rem] border border-gold/15 bg-card/60 px-6 py-8 sm:px-10 sm:py-12">
         <span
-          className="pointer-events-none absolute inset-0 rounded-3xl opacity-80 animate-neon-edge"
+          className="pointer-events-none absolute inset-0 rounded-[2rem] opacity-70"
           style={{
-            background: 'radial-gradient(circle at 40% 30%, rgba(255, 234, 144, 0.22), transparent 45%, transparent 100%)',
+            background: 'radial-gradient(circle at 50% 15%, rgba(255, 245, 175, 0.18), transparent 30%), radial-gradient(circle at 85% 80%, rgba(255, 205, 85, 0.12), transparent 45%)',
           }}
         />
         <span
-          className="pointer-events-none absolute inset-x-4 top-4 h-1 rounded-full bg-gradient-to-r from-transparent via-gold/40 to-transparent blur-xl"
+          className="pointer-events-none absolute inset-x-6 top-5 h-1 rounded-full bg-gradient-to-r from-gold/80 via-transparent to-transparent blur-sm"
         />
-        <div className="relative font-display text-7xl text-gold-gradient sm:text-[5rem] md:text-[6rem] tabular-nums tracking-[-0.04em] animate-neon-pulse animate-neon-flicker-fast">
+        <span
+          className="pointer-events-none absolute inset-x-6 bottom-5 h-1 rounded-full bg-gradient-to-l from-gold/80 via-transparent to-transparent blur-sm"
+        />
+        <div className="relative font-display text-[6.5rem] text-gold-gradient sm:text-[7.25rem] md:text-[7.75rem] lg:text-[8.25rem] tabular-nums tracking-[-0.05em] leading-none animate-neon-pulse animate-neon-flicker-fast">
           {padded}
         </div>
       </div>
