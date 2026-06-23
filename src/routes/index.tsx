@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
 
 function useServerSyncedNow() {
   const DEFAULT_LAUNCH_AT = useMemo(
-    () => new Date("2026-06-22T11:39:00.000Z").getTime(),
+    () => new Date("2026-06-23T11:40:00.000Z").getTime(),
     [],
   );
 
