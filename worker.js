@@ -24,31 +24,25 @@ function stripCookieDomain(setCookieValue) {
 function rewriteLocationHeader(location, requestOrigin, targetOrigin) {
   if (!location) return location;
 
-  // Absolute URL pointing to the origin app: rewrite to /app/* on our domain.
   try {
     const parsed = new URL(location, requestOrigin);
     const target = new URL(targetOrigin);
 
     if (parsed.host === target.host) {
-      // Avoid double-prefixing if the origin path already contains the proxy prefix.
-      const path = parsed.pathname.startsWith(PROXY_PREFIX) ? parsed.pathname : `${PROXY_PREFIX}${parsed.pathname}`;
-      return `${requestOrigin}${path}${parsed.search}${parsed.hash}`;
+      const proxiedPath = parsed.pathname === '/' ? `${PROXY_PREFIX}/` : `${PROXY_PREFIX}${parsed.pathname}`;
+      return `${requestOrigin}${proxiedPath}${parsed.search}${parsed.hash}`;
     }
   } catch {
-    // If URL parsing fails, fall back to relative handling below.
+    // Ignore invalid URLs, fall back to relative rewrite.
   }
 
-  // Relative location (starts with '/'). If it already begins with the proxy
-  // prefix, keep it; otherwise prefix it so navigation stays under /app.
   if (location.startsWith('/')) {
-    if (location === '/' ) return `${requestOrigin}${PROXY_PREFIX}/`;
     if (location.startsWith(`${PROXY_PREFIX}/`) || location === PROXY_PREFIX) {
-      return `${requestOrigin}${location}`;
+      return location;
     }
-    return `${requestOrigin}${PROXY_PREFIX}${location}`;
+    return `${requestOrigin}${location === '/' ? `${PROXY_PREFIX}/` : `${PROXY_PREFIX}${location}`}`;
   }
 
-  // Leave other kinds of locations (hashes, relative fragments) untouched.
   return location;
 }
 
@@ -87,40 +81,13 @@ function getProxyTarget(request, env) {
   const origin = env.ORIGIN_APP || DEFAULT_ORIGIN;
   const target = new URL(origin);
   const requestUrl = new URL(request.url);
-  // Preserve the /app prefix when forwarding so origin receives the same path.
-  // Examples:
-  //  - /app/        -> origin:/app/
-  //  - /app/foo     -> origin:/app/foo
-  // This avoids mapping top-level /app routes to origin root when the origin
-  // application is mounted under /app.
-  const path = requestUrl.pathname;
-  const accept = (request.headers.get('accept') || '').toLowerCase();
 
-  // Asset extensions that should be forwarded to the origin with the /app
-  // prefix stripped (so /app/assets/... -> /assets/...).
-  const assetExtRe = /\.(js|mjs|css|png|jpg|jpeg|svg|webp|gif|ico|woff2|woff|ttf|map)(?:\?|$)/i;
-
-  // Strip the proxy prefix for asset requests so the origin serves them from
-  // its normal static path.
-  if (path === PROXY_PREFIX || path === `${PROXY_PREFIX}/`) {
-    // Request the origin root to get the SPA HTML for client-side routing.
+  if (requestUrl.pathname === PROXY_PREFIX || requestUrl.pathname === `${PROXY_PREFIX}/`) {
     target.pathname = '/';
-  } else if (path.startsWith(`${PROXY_PREFIX}/`)) {
-    const withoutPrefix = path.slice(PROXY_PREFIX.length);
-    // If this looks like an asset request, forward to the stripped path.
-    if (assetExtRe.test(withoutPrefix)) {
-      target.pathname = withoutPrefix.startsWith('/') ? withoutPrefix : `/${withoutPrefix}`;
-    } else if (accept.includes('text/html')) {
-      // Navigation: request origin root to get SPA HTML for client-side routing.
-      target.pathname = '/';
-    } else {
-      // Default: forward with the prefix stripped.
-      target.pathname = withoutPrefix.startsWith('/') ? withoutPrefix : `/${withoutPrefix}`;
-    }
   } else {
-    target.pathname = path;
+    const proxiedPath = requestUrl.pathname.slice(PROXY_PREFIX.length);
+    target.pathname = proxiedPath.startsWith('/') ? proxiedPath : `/${proxiedPath}`;
   }
-
   target.search = requestUrl.search;
 
   return target;
@@ -128,11 +95,15 @@ function getProxyTarget(request, env) {
 
 async function proxyRequest(request, env) {
   const target = getProxyTarget(request, env);
-  
-  // Create a fresh request to the target, copying essential headers only.
+  const forwardedHeaders = new Headers(request.headers);
+  forwardedHeaders.delete('host');
+  forwardedHeaders.set('x-forwarded-host', new URL(request.url).host);
+  forwardedHeaders.set('x-forwarded-proto', new URL(request.url).protocol.replace(':', ''));
+  forwardedHeaders.set('x-forwarded-for', request.headers.get('cf-connecting-ip') || '');
+
   const proxyRequest = new Request(target.href, {
     method: request.method,
-    headers: request.headers,
+    headers: forwardedHeaders,
     body: request.body,
     redirect: 'manual',
   });
@@ -176,8 +147,7 @@ export default {
     const url = new URL(request.url);
 
     if (url.pathname === ENTRY_PATH) {
-      // Redirect to /app (no trailing slash) to match origin routing behavior.
-      return Response.redirect(`${url.origin}${PROXY_PREFIX}`, 302);
+      return Response.redirect('https://gms.geethmunasinghe.lk/', 302);
     }
 
     if (url.pathname === PROXY_PREFIX || url.pathname.startsWith(`${PROXY_PREFIX}/`)) {
