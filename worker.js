@@ -24,25 +24,31 @@ function stripCookieDomain(setCookieValue) {
 function rewriteLocationHeader(location, requestOrigin, targetOrigin) {
   if (!location) return location;
 
+  // Absolute URL pointing to the origin app: rewrite to /app/* on our domain.
   try {
     const parsed = new URL(location, requestOrigin);
     const target = new URL(targetOrigin);
 
     if (parsed.host === target.host) {
-      const proxiedPath = parsed.pathname === '/' ? `${PROXY_PREFIX}/` : `${PROXY_PREFIX}${parsed.pathname}`;
-      return `${requestOrigin}${proxiedPath}${parsed.search}${parsed.hash}`;
+      // Avoid double-prefixing if the origin path already contains the proxy prefix.
+      const path = parsed.pathname.startsWith(PROXY_PREFIX) ? parsed.pathname : `${PROXY_PREFIX}${parsed.pathname}`;
+      return `${requestOrigin}${path}${parsed.search}${parsed.hash}`;
     }
   } catch {
-    // Ignore invalid URLs, fall back to relative rewrite.
+    // If URL parsing fails, fall back to relative handling below.
   }
 
+  // Relative location (starts with '/'). If it already begins with the proxy
+  // prefix, keep it; otherwise prefix it so navigation stays under /app.
   if (location.startsWith('/')) {
+    if (location === '/' ) return `${requestOrigin}${PROXY_PREFIX}/`;
     if (location.startsWith(`${PROXY_PREFIX}/`) || location === PROXY_PREFIX) {
-      return location;
+      return `${requestOrigin}${location}`;
     }
-    return `${requestOrigin}${location === '/' ? `${PROXY_PREFIX}/` : `${PROXY_PREFIX}${location}`}`;
+    return `${requestOrigin}${PROXY_PREFIX}${location}`;
   }
 
+  // Leave other kinds of locations (hashes, relative fragments) untouched.
   return location;
 }
 
@@ -81,13 +87,39 @@ function getProxyTarget(request, env) {
   const origin = env.ORIGIN_APP || DEFAULT_ORIGIN;
   const target = new URL(origin);
   const requestUrl = new URL(request.url);
+  // Preserve the /app prefix when forwarding so origin receives the same path.
+  // Examples:
+  //  - /app/        -> origin:/app/
+  //  - /app/foo     -> origin:/app/foo
+  // This avoids mapping top-level /app routes to origin root when the origin
+  // application is mounted under /app.
+  const path = requestUrl.pathname;
+  const accept = (request.headers.get('accept') || '').toLowerCase();
 
-  if (requestUrl.pathname === PROXY_PREFIX || requestUrl.pathname === `${PROXY_PREFIX}/`) {
+  // Asset extensions that should be forwarded to the origin with the /app
+  // prefix stripped (so /app/assets/... -> /assets/...).
+  const assetExtRe = /\.(js|mjs|css|png|jpg|jpeg|svg|webp|gif|ico|woff2|woff|ttf|map)(?:\?|$)/i;
+
+  // Strip the proxy prefix for asset requests so the origin serves them from
+  // its normal static path.
+  if (path === PROXY_PREFIX || path === `${PROXY_PREFIX}/`) {
     target.pathname = '/';
+  } else if (path.startsWith(`${PROXY_PREFIX}/`)) {
+    const withoutPrefix = path.slice(PROXY_PREFIX.length);
+    // If this looks like an asset request, forward to the stripped path.
+    if (assetExtRe.test(withoutPrefix)) {
+      target.pathname = withoutPrefix.startsWith('/') ? withoutPrefix : `/${withoutPrefix}`;
+    } else if (accept.includes('text/html')) {
+      // Navigation: serve the origin root (index.html) so client-side routing works.
+      target.pathname = '/';
+    } else {
+      // Default: forward with the prefix stripped.
+      target.pathname = withoutPrefix.startsWith('/') ? withoutPrefix : `/${withoutPrefix}`;
+    }
   } else {
-    const proxiedPath = requestUrl.pathname.slice(PROXY_PREFIX.length);
-    target.pathname = proxiedPath.startsWith('/') ? proxiedPath : `/${proxiedPath}`;
+    target.pathname = path;
   }
+
   target.search = requestUrl.search;
 
   return target;
@@ -95,11 +127,16 @@ function getProxyTarget(request, env) {
 
 async function proxyRequest(request, env) {
   const target = getProxyTarget(request, env);
-  const forwardedHeaders = new Headers(request.headers);
-  forwardedHeaders.delete('host');
-  forwardedHeaders.set('x-forwarded-host', new URL(request.url).host);
-  forwardedHeaders.set('x-forwarded-proto', new URL(request.url).protocol.replace(':', ''));
-  forwardedHeaders.set('x-forwarded-for', request.headers.get('cf-connecting-ip') || '');
+  // Build a minimal, safe set of headers to forward to the origin. Avoid
+  // proxy-specific headers that might change origin routing logic.
+  const forwardedHeaders = new Headers();
+  const incoming = request.headers;
+  const copyKeys = ['accept', 'accept-language', 'user-agent', 'cookie', 'content-type', 'origin', 'referer'];
+  for (const k of copyKeys) {
+    const v = incoming.get(k);
+    if (v) forwardedHeaders.set(k, v);
+  }
+  // Let the fetch API set the Host header automatically for the target.
 
   const proxyRequest = new Request(target.href, {
     method: request.method,
@@ -110,6 +147,8 @@ async function proxyRequest(request, env) {
 
   const originResponse = await fetch(proxyRequest);
   const responseHeaders = new Headers();
+  // Expose the actual proxied target for debugging (temporary).
+  responseHeaders.set('x-proxy-target', target.href);
 
   for (const [key, value] of originResponse.headers) {
     const lowerKey = key.toLowerCase();
