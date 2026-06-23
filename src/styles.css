@@ -49,38 +49,65 @@
   --font-serif: "Cormorant Garamond", "Times New Roman", serif;
   --font-sans: "Inter", system-ui, sans-serif;
 
+  --shadow-gold: 0 0 60px -10px rgba(215, 168, 75, 0.25);
   --shadow-gold: 0 0 60px -10px color-mix(in oklab, var(--gold) 60%, transparent);
+  --shadow-gold-intense: 0 0 120px -10px rgba(255, 209, 120, 0.28);
   --shadow-gold-intense: 0 0 120px -10px color-mix(in oklab, var(--gold-bright) 80%, transparent);
 }
 
 :root {
   --radius: 0.5rem;
 
+  --obsidian: #111519;
   --obsidian: oklch(0.12 0.005 60);
+  --ember: #3a2422;
   --ember: oklch(0.18 0.012 50);
+  --cream: #efe8d5;
   --cream: oklch(0.94 0.025 80);
+  --gold: #d7a84b;
   --gold: oklch(0.78 0.13 80);
+  --gold-bright: #ffd177;
   --gold-bright: oklch(0.86 0.15 85);
+  --gold-deep: #b78438;
   --gold-deep: oklch(0.55 0.13 70);
 
+  --background: #0c1014;
   --background: oklch(0.08 0.005 60);
+  --foreground: #eee6d9;
   --foreground: oklch(0.94 0.025 80);
+  --card: #13191d;
   --card: oklch(0.12 0.008 55);
+  --card-foreground: #eee6d9;
   --card-foreground: oklch(0.94 0.025 80);
+  --popover: #101418;
   --popover: oklch(0.10 0.008 55);
+  --popover-foreground: #eee6d9;
   --popover-foreground: oklch(0.94 0.025 80);
+  --primary: #d7a84b;
   --primary: oklch(0.78 0.13 80);
+  --primary-foreground: #101418;
   --primary-foreground: oklch(0.10 0.005 60);
+  --secondary: #3b3b4c;
   --secondary: oklch(0.18 0.012 50);
+  --secondary-foreground: #eee6d9;
   --secondary-foreground: oklch(0.94 0.025 80);
+  --muted: #2b2f35;
   --muted: oklch(0.16 0.008 55);
+  --muted-foreground: #a8a9b0;
   --muted-foreground: oklch(0.65 0.025 75);
+  --accent: #5c5a7a;
   --accent: oklch(0.22 0.025 70);
+  --accent-foreground: #eee6d9;
   --accent-foreground: oklch(0.94 0.025 80);
+  --destructive: #b82a28;
   --destructive: oklch(0.55 0.20 25);
+  --destructive-foreground: #ffebe9;
   --destructive-foreground: oklch(0.98 0 0);
+  --border: rgba(255, 215, 120, 0.18);
   --border: oklch(0.25 0.02 70 / 50%);
+  --input: #2a2f35;
   --input: oklch(0.20 0.015 60);
+  --ring: #d7a84b;
   --ring: oklch(0.78 0.13 80);
 }
 
