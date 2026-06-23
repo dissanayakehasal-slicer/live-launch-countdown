@@ -136,7 +136,7 @@ function LaunchEditor() {
   const [err, setErr] = useState<string | null>(null);
 
   const current = data?.launchAt ?? null;
-  const currentLocal = toLocalInput(current);
+  const currentLocal = toSLSTInput(current);
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -146,7 +146,7 @@ function LaunchEditor() {
     try {
       const local = value || currentLocal;
       if (!local) throw new Error("Pick a date");
-      const iso = new Date(local).toISOString();
+      const iso = slstInputToISO(local);
       await update({ data: { password, launchAt: iso } });
       setMsg("Launch time updated");
       setPassword("");
@@ -163,13 +163,13 @@ function LaunchEditor() {
       <div className="rounded-md border border-border/60 bg-background/50 p-4">
         <div className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Current launch</div>
         <div className="mt-1 font-serif-italic text-lg text-cream">
-          {current ? new Date(current).toLocaleString() : "Not set"}
+          {current ? formatSLST(current) : "Not set"}
         </div>
       </div>
 
       <label className="block">
         <span className="mb-2 block text-xs uppercase tracking-[0.3em] text-muted-foreground">
-          New launch date & time (your local time)
+          New launch date & time — {SLST_LABEL}
         </span>
         <input
           type="datetime-local"
