@@ -5,7 +5,7 @@ main = "worker.js"
 # If you want Wrangler to upload static assets built by Nitro, set the `site.bucket`
 # to the public output folder. The Nitro/Vite build used by this project places
 # static assets in `.output/public` by default.
-site = { bucket = ".output/public" }
+site = { bucket = "dist/client" }
 
 workers_dev = true
 

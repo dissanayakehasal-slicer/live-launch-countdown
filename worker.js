@@ -8,7 +8,9 @@ let serverPromise;
 async function getServer() {
   if (!serverPromise) {
     // Defer dynamic import until runtime so local dev still works without build.
-    serverPromise = import('./.output/server/index.mjs')
+    // The Vite build in this repo outputs server bundles to `dist/server`.
+    // Import that bundle when available.
+    serverPromise = import('./dist/server/server.js')
       .then((m) => (m.default ?? m))
       .catch(() => null);
   }
