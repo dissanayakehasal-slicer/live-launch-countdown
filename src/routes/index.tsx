@@ -245,16 +245,14 @@ function LiveState() {
 
       <a
         href={ENTER_URL}
-        className="group relative mt-14 inline-flex items-center gap-4 overflow-hidden rounded-full border border-gold/40 bg-gradient-to-b from-gold-bright/90 to-gold-deep px-12 py-5 font-display text-xl tracking-[0.4em] text-obsidian shadow-[0_20px_80px_-20px_color-mix(in_oklab,var(--gold)_70%,transparent)] transition-all duration-500 hover:scale-[1.03] hover:shadow-[0_30px_120px_-20px_color-mix(in_oklab,var(--gold-bright)_90%,transparent)] animate-reveal-up sm:text-2xl"
+        className="group relative mt-14 inline-flex items-center gap-4 overflow-hidden rounded-full border-2 border-gold/80 bg-gradient-to-b from-gold-bright/95 to-gold-deep px-12 py-5 font-display text-xl tracking-[0.4em] text-obsidian transition-all duration-500 hover:scale-[1.05] animate-reveal-up animate-neon-pulse sm:text-2xl"
         style={{ animationDelay: "0.6s" }}
       >
-        <span className="relative z-10">Enter Now</span>
+        <span className="relative z-10 animate-neon-flicker">Enter Now</span>
         <svg className="relative z-10 h-5 w-5 transition-transform duration-500 group-hover:translate-x-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M5 12h14M13 5l7 7-7 7" />
         </svg>
-        <span
-          className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent transition-transform duration-1000 group-hover:translate-x-full"
-        />
+        <span className="pointer-events-none absolute inset-0 animate-neon-sweep bg-gradient-to-r from-transparent via-white/50 to-transparent" />
       </a>
 
       <p className="mt-14 max-w-md font-serif-italic text-sm text-muted-foreground animate-reveal-up" style={{ animationDelay: "0.9s" }}>
