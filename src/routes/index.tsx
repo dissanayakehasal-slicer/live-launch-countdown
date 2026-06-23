@@ -222,18 +222,31 @@ function CinematicCountdown({ remainingSec }: { remainingSec: number }) {
     }
   }, []);
 
-  // Handle click to unlock audio autoplay
-  const handleUnlockAudio = () => {
-    if (!audioUnlockedRef.current && audioRef.current) {
-      audioRef.current.play().then(() => {
-        audioUnlockedRef.current = true;
-        audioRef.current!.pause();
-        console.log(`[Audio] Unlocked audio playback on user interaction`);
-      }).catch((err: any) => {
-        console.error(`[Audio] Failed to unlock:`, err?.message || err);
+  // Unlock audio on any user interaction
+  useEffect(() => {
+    const unlockAudio = () => {
+      if (!audioUnlockedRef.current && audioRef.current) {
+        audioRef.current.play().then(() => {
+          audioUnlockedRef.current = true;
+          audioRef.current!.pause();
+          console.log(`[Audio] Unlocked audio playback on user interaction`);
+        }).catch((err: any) => {
+          console.error(`[Audio] Failed to unlock:`, err?.message || err);
+        });
+      }
+    };
+
+    const events = ["click", "keydown", "touchstart", "mousemove"];
+    events.forEach(event => {
+      document.addEventListener(event, unlockAudio, { once: true });
+    });
+
+    return () => {
+      events.forEach(event => {
+        document.removeEventListener(event, unlockAudio);
       });
-    }
-  };
+    };
+  }, []);
 
   // Play countdown beep on each second transition
   useEffect(() => {
@@ -250,27 +263,17 @@ function CinematicCountdown({ remainingSec }: { remainingSec: number }) {
   }, [n]);
 
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-background cursor-pointer"
-      onClick={handleUnlockAudio}
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
       <AmbientBackdrop intense />
-      <div className="relative flex flex-col items-center justify-center">
-        <div
-          key={n}
-          className="font-display text-gold-gradient animate-count-pop animate-gold-shimmer leading-none tabular-nums"
-          style={{
-            fontSize: "min(72vh, 60vw)",
-            textShadow: "0 0 80px color-mix(in oklab, var(--gold) 50%, transparent)",
-          }}
-        >
-          {n}
-        </div>
-        {!audioUnlockedRef.current && (
-          <div className="absolute bottom-16 text-center text-xs uppercase tracking-widest text-gold/60 animate-pulse">
-            Click for sound
-          </div>
-        )}
+      <div
+        key={n}
+        className="font-display text-gold-gradient animate-count-pop animate-gold-shimmer leading-none tabular-nums"
+        style={{
+          fontSize: "min(72vh, 60vw)",
+          textShadow: "0 0 80px color-mix(in oklab, var(--gold) 50%, transparent)",
+        }}
+      >
+        {n}
       </div>
     </div>
   );
