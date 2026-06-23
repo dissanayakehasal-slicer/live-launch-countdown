@@ -145,9 +145,42 @@
   0%, 100% { opacity: 0.6; }
   50% { opacity: 1; }
 }
+@keyframes neon-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 12px color-mix(in oklab, var(--gold-bright) 70%, transparent),
+      0 0 32px color-mix(in oklab, var(--gold) 55%, transparent),
+      0 0 80px color-mix(in oklab, var(--gold-deep) 45%, transparent),
+      inset 0 0 22px color-mix(in oklab, var(--gold-bright) 35%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 22px color-mix(in oklab, var(--gold-bright) 95%, transparent),
+      0 0 60px color-mix(in oklab, var(--gold) 85%, transparent),
+      0 0 140px color-mix(in oklab, var(--gold-bright) 70%, transparent),
+      inset 0 0 32px color-mix(in oklab, var(--gold-bright) 55%, transparent);
+  }
+}
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    opacity: 1;
+    text-shadow:
+      0 0 6px color-mix(in oklab, var(--gold-bright) 90%, transparent),
+      0 0 18px color-mix(in oklab, var(--gold) 80%, transparent),
+      0 0 42px color-mix(in oklab, var(--gold-deep) 70%, transparent);
+  }
+  20%, 24%, 55% { opacity: 0.78; text-shadow: none; }
+}
+@keyframes neon-sweep {
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(120%); }
+}
 
 @utility animate-count-pop { animation: count-pop 1s ease-in-out forwards; }
 @utility animate-gold-shimmer { animation: gold-shimmer 4s ease-in-out infinite; }
 @utility animate-slow-pulse { animation: slow-pulse 3s ease-in-out infinite; }
 @utility animate-reveal-up { animation: reveal-up 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 @utility animate-vignette-pulse { animation: vignette-pulse 6s ease-in-out infinite; }
+@utility animate-neon-pulse { animation: neon-pulse 2.4s ease-in-out infinite; }
+@utility animate-neon-flicker { animation: neon-flicker 4s linear infinite; }
+@utility animate-neon-sweep { animation: neon-sweep 2.8s ease-in-out infinite; }
