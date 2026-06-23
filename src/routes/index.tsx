@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getLaunchInfo } from "@/lib/launch.functions";
 
 // Where ENTER NOW sends users (replace with the real platform URL)
-const ENTER_URL = "https://geethmunasinghe.lk";
+const ENTER_URL = "https://remix-of-gen-z-science-hub.goyumgeeth43.workers.dev/";
 
 export const Route = createFileRoute("/")({
   head: () => ({
