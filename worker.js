@@ -17,7 +17,7 @@ async function getServer() {
   return serverPromise;
 }
 
-const REDIRECT_AFTER = new Date("2026-06-23T09:10:00.000Z");
+const REDIRECT_AFTER = new Date("2026-06-23T08:34:00.000Z");
 const REDIRECT_URL = "https://remix-of-gen-z-science-hub.goyumgeeth43.workers.dev/";
 
 export default {
