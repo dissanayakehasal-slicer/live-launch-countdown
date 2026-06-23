@@ -192,7 +192,7 @@ function TimeCell({ value, label }: { value: number; label: string }) {
   return (
     <div className="relative flex min-w-[72px] flex-col items-center sm:min-w-[120px]">
       <div className="ring-gold rounded-md bg-card/60 px-4 py-6 backdrop-blur-sm sm:px-8 sm:py-10">
-        <div className="font-display text-5xl text-gold-gradient sm:text-7xl md:text-8xl tabular-nums">
+        <div className="font-display text-6xl text-gold-gradient sm:text-8xl md:text-9xl tabular-nums animate-neon-pulse animate-neon-flicker-fast">
           {padded}
         </div>
       </div>
@@ -229,17 +229,17 @@ function CinematicCountdown({ remainingSec }: { remainingSec: number }) {
 function LiveState() {
   return (
     <div className="fixed inset-0 z-40 flex flex-col items-center justify-center px-6 text-center">
-      <div className="mb-6 flex items-center gap-3 text-xs uppercase tracking-[0.5em] text-gold animate-reveal-up">
-        <span className="h-2 w-2 rounded-full bg-gold animate-slow-pulse" />
+      <div className="mb-6 flex items-center gap-3 text-xs uppercase tracking-[0.5em] text-gold animate-reveal-up animate-neon-flicker-fast">
+        <span className="h-2 w-2 rounded-full bg-gold animate-neon-pulse" />
         Live Now
-        <span className="h-2 w-2 rounded-full bg-gold animate-slow-pulse" />
+        <span className="h-2 w-2 rounded-full bg-gold animate-neon-pulse" />
       </div>
 
       <h1
-        className="font-display text-cream leading-[0.95] animate-reveal-up"
-        style={{ fontSize: "clamp(2.5rem, 9vw, 8rem)" }}
+        className="font-display text-cream leading-[0.95] animate-reveal-up animate-neon-flicker-fast"
+        style={{ fontSize: "clamp(2.75rem, 9vw, 9rem)" }}
       >
-        GEETHMUNASINGHE<span className="text-gold-gradient animate-gold-shimmer">.LK</span>
+        GEETHMUNASINGHE<span className="text-gold-gradient animate-gold-shimmer animate-neon-pulse">.LK</span>
       </h1>
       <div
         className="mt-2 font-serif-italic text-cream/80 animate-reveal-up"
@@ -250,7 +250,7 @@ function LiveState() {
 
       <a
         href={ENTER_URL}
-        className="group relative mt-14 inline-flex items-center gap-4 overflow-hidden rounded-full border-2 border-gold/80 bg-gradient-to-b from-gold-bright/95 to-gold-deep px-12 py-5 font-display text-xl tracking-[0.4em] text-obsidian transition-all duration-500 hover:scale-[1.05] animate-reveal-up animate-neon-pulse animate-neon-cta sm:text-2xl"
+        className="group relative mt-14 inline-flex items-center gap-4 overflow-hidden rounded-full border-2 border-gold/80 bg-gradient-to-b from-gold-bright/95 to-gold-deep px-12 py-5 font-display text-xl tracking-[0.4em] text-obsidian transition-all duration-500 hover:scale-[1.05] animate-reveal-up animate-neon-pulse animate-neon-flicker-fast animate-neon-cta sm:text-2xl"
         style={{ animationDelay: "0.6s" }}
       >
         <span className="relative z-10 animate-neon-flicker">Enter Now</span>

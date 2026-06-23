@@ -196,5 +196,6 @@
 @utility animate-reveal-up { animation: reveal-up 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 @utility animate-vignette-pulse { animation: vignette-pulse 6s ease-in-out infinite; }
 @utility animate-neon-pulse { animation: neon-pulse 2.4s ease-in-out infinite; }
-@utility animate-neon-flicker { animation: neon-flicker 4s linear infinite; }
+@utility animate-neon-flicker { animation: neon-flicker 3s linear infinite; }
+@utility animate-neon-flicker-fast { animation: neon-flicker 2s linear infinite; }
 @utility animate-neon-sweep { animation: neon-sweep 2.8s ease-in-out infinite; }
