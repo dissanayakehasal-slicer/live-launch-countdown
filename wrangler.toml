@@ -14,9 +14,9 @@ account_id = ""
 
 workers_dev = true
 
-[d1_databases]
 # Declare the D1 database binding named LAUNCH_DB. Replace `database_name` with
 # your D1 database name in Cloudflare when provisioning.
 [[d1_databases]]
 binding = "LAUNCH_DB"
 database_name = "live_launch_db"
+database_id = "ad58d46b-82ac-4698-b047-171ae35e1b2c"
