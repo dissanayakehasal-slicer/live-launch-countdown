@@ -1,5 +1,6 @@
 name = "live-launch-countdown"
 compatibility_date = "2026-06-23"
+compatibility_flags = ["nodejs_compat"]
 main = "worker.js"
 
 # If you want Wrangler to upload static assets built by Nitro, set the `site.bucket`
