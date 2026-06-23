@@ -209,12 +209,41 @@ function CinematicCountdown({ remainingSec }: { remainingSec: number }) {
   const n = Math.max(1, Math.min(10, Math.ceil(remainingSec)));
   const audioContextRef = useRef<AudioContext | null>(null);
   const lastPlayedRef = useRef<number | null>(null);
+  const contextResumedRef = useRef(false);
 
-  // Initialize AudioContext on first mount
+  // Initialize AudioContext and set up user interaction listener
   useEffect(() => {
     if (!audioContextRef.current) {
       audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-      console.log(`[Audio] Created Web Audio Context`);
+      console.log(`[Audio] Created Web Audio Context (state: ${audioContextRef.current.state})`);
+
+      // Resume context on any user interaction
+      const resumeContext = () => {
+        const ctx = audioContextRef.current;
+        if (ctx && ctx.state === 'suspended') {
+          ctx.resume().then(() => {
+            contextResumedRef.current = true;
+            console.log(`[Audio] Context resumed after user interaction`);
+          }).catch((err) => {
+            console.error(`[Audio] Failed to resume context:`, err);
+          });
+        } else if (ctx) {
+          contextResumedRef.current = true;
+        }
+      };
+
+      // Listen for any user interaction to resume context
+      document.addEventListener('click', resumeContext, { once: true });
+      document.addEventListener('keydown', resumeContext, { once: true });
+      document.addEventListener('touchstart', resumeContext, { once: true });
+      document.addEventListener('pointerdown', resumeContext, { once: true });
+
+      return () => {
+        document.removeEventListener('click', resumeContext);
+        document.removeEventListener('keydown', resumeContext);
+        document.removeEventListener('touchstart', resumeContext);
+        document.removeEventListener('pointerdown', resumeContext);
+      };
     }
   }, []);
 
@@ -222,39 +251,36 @@ function CinematicCountdown({ remainingSec }: { remainingSec: number }) {
   useEffect(() => {
     if (lastPlayedRef.current !== n && n >= 1 && n <= 10) {
       lastPlayedRef.current = n;
-      
-      const ctx = audioContextRef.current;
-      if (ctx) {
-        try {
-          // Resume context if suspended (required in some browsers)
-          if (ctx.state === 'suspended') {
-            ctx.resume();
-          }
 
+      const ctx = audioContextRef.current;
+      if (ctx && contextResumedRef.current) {
+        try {
           // Create oscillator for beep
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
-          
+
           osc.connect(gain);
           gain.connect(ctx.destination);
-          
+
           // Beep parameters
           osc.frequency.value = 1000; // 1kHz beep
           osc.type = 'sine';
-          
+
           // Fade in and out to avoid clicks
           const now = ctx.currentTime;
           gain.gain.setValueAtTime(0, now);
           gain.gain.linearRampToValueAtTime(0.3, now + 0.01);
           gain.gain.linearRampToValueAtTime(0, now + 0.2);
-          
+
           osc.start(now);
           osc.stop(now + 0.2);
-          
+
           console.log(`[Audio] Played beep for second ${n}`);
         } catch (err: any) {
           console.error(`[Audio] Failed to play beep:`, err?.message || err);
         }
+      } else if (ctx && !contextResumedRef.current) {
+        console.log(`[Audio] Waiting for context to resume before playing beep ${n}`);
       }
     }
   }, [n]);
