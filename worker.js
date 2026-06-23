@@ -128,28 +128,17 @@ function getProxyTarget(request, env) {
 
 async function proxyRequest(request, env) {
   const target = getProxyTarget(request, env);
-  // Build a minimal, safe set of headers to forward to the origin. Avoid
-  // proxy-specific headers that might change origin routing logic.
-  const forwardedHeaders = new Headers();
-  const incoming = request.headers;
-  const copyKeys = ['accept', 'accept-language', 'user-agent', 'cookie', 'content-type', 'origin', 'referer'];
-  for (const k of copyKeys) {
-    const v = incoming.get(k);
-    if (v) forwardedHeaders.set(k, v);
-  }
-  // Let the fetch API set the Host header automatically for the target.
-
+  
+  // Create a fresh request to the target, copying essential headers only.
   const proxyRequest = new Request(target.href, {
     method: request.method,
-    headers: forwardedHeaders,
+    headers: request.headers,
     body: request.body,
     redirect: 'manual',
   });
 
   const originResponse = await fetch(proxyRequest);
   const responseHeaders = new Headers();
-  // Expose the actual proxied target for debugging (temporary).
-  responseHeaders.set('x-proxy-target', target.href);
 
   for (const [key, value] of originResponse.headers) {
     const lowerKey = key.toLowerCase();
